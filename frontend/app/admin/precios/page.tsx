@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import AppShell from "@/components/AppShell";
 import { api } from "@/lib/api";
 import type { Service } from "@/lib/types";
 
@@ -63,7 +62,7 @@ export default function PreciosPage() {
   }
 
   return (
-    <AppShell roles={["admin"]}>
+    <>
       {loadError && <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2">{loadError}</p>}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
         <h1 className="text-2xl font-bold">Tarifario Aprobado</h1>
@@ -162,6 +161,6 @@ export default function PreciosPage() {
         Edite cualquier precio y presione Enter o salga del campo para guardar automáticamente.
         Para agregar tarifas 2027 seleccione el año 2027 — los servicios aparecerán con campos en blanco listos para llenar.
       </p>
-    </AppShell>
+    </>
   );
 }

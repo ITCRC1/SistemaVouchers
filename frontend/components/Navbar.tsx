@@ -14,7 +14,7 @@ const NAV: Record<string, { label: string; href: string }[]> = {
     { label: "Auditoría", href: "/admin/auditoria" },
     { label: "Cuentas por Pagar", href: "/admin/cuentas-por-pagar" },
     { label: "Provisiones", href: "/admin/provisiones" },
-    { label: "Reportes", href: "/reports" },
+    { label: "Reportes", href: "/admin/reports" },
     { label: "❓  Centro de Ayuda", href: "/admin/ayuda" },
   ],
   concierge: [
@@ -26,7 +26,7 @@ const NAV: Record<string, { label: string; href: string }[]> = {
   ],
   auditor: [
     { label: "Auditoría", href: "/audit" },
-    { label: "Reportes", href: "/reports" },
+    { label: "Reportes", href: "/admin/reports" },
     { label: "❓  Centro de Ayuda", href: "/admin/ayuda" },
   ],
 };

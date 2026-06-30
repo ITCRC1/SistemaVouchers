@@ -1,40 +1,43 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getStoredUser, login } from "@/lib/auth";
 import Navbar from "./Navbar";
+
+// useLayoutEffect fires before browser paint; fall back to useEffect on server (it won't run there)
+const useSyncEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export default function AppShell({ children, roles }: { children: React.ReactNode; roles?: string[] }) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const go = async () => {
-      let user = getStoredUser();
-      if (!user) {
+  useSyncEffect(() => {
+    const user = getStoredUser();
+    if (user && (!roles || roles.includes(user.role))) {
+      setReady(true);
+      return;
+    }
+    (async () => {
+      let u = user;
+      if (!u) {
         try {
-          user = await login("admin@thecrc.com", "Admin2026!");
+          u = await login("admin@thecrc.com", "Admin2026!");
         } catch {
           router.replace("/login");
           return;
         }
       }
-      if (roles && !roles.includes(user.role)) {
+      if (roles && !roles.includes(u!.role)) {
         router.replace("/login");
         return;
       }
       setReady(true);
-    };
-    go();
+    })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!ready) return (
-    <div className="flex items-center justify-center h-screen bg-gray-50">
-      <div className="text-gray-400 text-sm">Cargando…</div>
-    </div>
-  );
+  if (!ready) return null;
 
   return (
     <div className="flex h-screen">

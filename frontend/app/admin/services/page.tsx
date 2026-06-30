@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import AppShell from "@/components/AppShell";
 import { api } from "@/lib/api";
 import type { Service } from "@/lib/types";
 
@@ -33,7 +32,7 @@ export default function ServicesPage() {
   }
 
   return (
-    <AppShell roles={["admin"]}>
+    <>
       <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
         <h1 className="text-2xl font-bold">Catálogo de Servicios</h1>
         <button className="btn-primary" onClick={() => setShowForm(true)}>+ Nuevo Servicio</button>
@@ -114,6 +113,6 @@ export default function ServicesPage() {
           </table>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

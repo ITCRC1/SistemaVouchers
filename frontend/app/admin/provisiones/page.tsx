@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
-import AppShell from "@/components/AppShell";
 import { api } from "@/lib/api";
 import type { Voucher, Provider, AuditStatus } from "@/lib/types";
 import { AUDIT_STATUS_LABELS, AUDIT_STATUS_COLORS } from "@/lib/types";
@@ -104,7 +103,7 @@ export default function ProvisionesPage() {
   const years = [today.getFullYear() - 1, today.getFullYear(), today.getFullYear() + 1];
 
   return (
-    <AppShell roles={["admin"]}>
+    <>
 
       {/* ── Encabezado ──────────────────────────────────────────────────────── */}
       <div className="mb-6">
@@ -345,6 +344,6 @@ export default function ProvisionesPage() {
           </div>
         </div>
       )}
-    </AppShell>
+    </>
   );
 }

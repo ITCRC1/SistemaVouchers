@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
-import AppShell from "@/components/AppShell";
 import { api } from "@/lib/api";
 import type { Voucher, Provider, AuditStatus } from "@/lib/types";
 import { AUDIT_STATUS_LABELS, AUDIT_STATUS_COLORS } from "@/lib/types";
@@ -107,7 +106,7 @@ export default function CuentasPorPagarPage() {
   const hasFilters = dateFrom || dateTo || propFilter || provFilter || auditFilter;
 
   return (
-    <AppShell roles={["admin"]}>
+    <>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Cuentas por Pagar</h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -306,6 +305,6 @@ export default function CuentasPorPagarPage() {
           </div>
         </div>
       )}
-    </AppShell>
+    </>
   );
 }

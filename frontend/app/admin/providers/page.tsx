@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import AppShell from "@/components/AppShell";
 import { api } from "@/lib/api";
 import type { Provider } from "@/lib/types";
 
@@ -38,7 +37,7 @@ export default function ProvidersPage() {
   }
 
   return (
-    <AppShell roles={["admin"]}>
+    <>
       <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
         <h1 className="text-2xl font-bold">Proveedores</h1>
         <button className="btn-primary" onClick={() => setShowForm(true)}>+ Nuevo Proveedor</button>
@@ -105,6 +104,6 @@ export default function ProvidersPage() {
         </table>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

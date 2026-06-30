@@ -1,5 +1,4 @@
 "use client";
-import AppShell from "@/components/AppShell";
 import { useState } from "react";
 
 type RoleTag = "Admin" | "Concierge" | "Front Desk" | "Auditor";
@@ -248,7 +247,7 @@ export default function AyudaPage() {
   const [open, setOpen] = useState<string | null>(null);
 
   return (
-    <AppShell roles={["admin", "concierge", "auditor"]}>
+    <>
       <div className="max-w-3xl mx-auto">
 
         {/* Header */}
@@ -337,6 +336,6 @@ export default function AyudaPage() {
           Sistema de Vouchers Electrónicos · The Costa Rica Collection · v1.0
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

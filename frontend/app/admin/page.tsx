@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import AppShell from "@/components/AppShell";
 import { api } from "@/lib/api";
 import type { DashboardSummary } from "@/lib/types";
 
@@ -23,7 +22,7 @@ export default function AdminDashboard() {
   const fmt = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
 
   return (
-    <AppShell roles={["admin"]}>
+    <>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard — Administración</h1>
       {data ? (
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
@@ -49,6 +48,6 @@ export default function AdminDashboard() {
           </a>
         ))}
       </div>
-    </AppShell>
+    </>
   );
 }

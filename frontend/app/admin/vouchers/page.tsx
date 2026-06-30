@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import AppShell from "@/components/AppShell";
 import StatusBadge from "@/components/StatusBadge";
 import { api } from "@/lib/api";
 
@@ -115,7 +114,7 @@ export default function VouchersPage() {
     : services;
 
   return (
-    <AppShell roles={["admin", "concierge"]}>
+    <>
       <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
         <h1 className="text-2xl font-bold">Vouchers</h1>
         <div className="flex gap-3 flex-wrap">
@@ -430,7 +429,7 @@ export default function VouchersPage() {
           </div>
         </div>
       )}
-    </AppShell>
+    </>
   );
 }
 

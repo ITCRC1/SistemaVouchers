@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import AppShell from "@/components/AppShell";
 import StatusBadge from "@/components/StatusBadge";
 import { api } from "@/lib/api";
 import type { Voucher, AuditStatus } from "@/lib/types";
@@ -97,7 +96,7 @@ export default function AuditoriaPage() {
   }
 
   return (
-    <AppShell roles={["admin", "auditor"]}>
+    <>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Auditoría de Vouchers</h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -406,6 +405,6 @@ export default function AuditoriaPage() {
           </div>
         </div>
       )}
-    </AppShell>
+    </>
   );
 }
