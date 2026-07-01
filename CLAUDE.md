@@ -8,8 +8,8 @@ Sistema de Vouchers Electrónicos for **The Costa Rica Collection** (4 hotel pro
 
 | | |
 |---|---|
-| **Frontend (prod)** | `https://vouchers.thecostaricacollection.com` |
-| **Backend (prod)** | `https://sistema-vouchers-backend-production.up.railway.app` |
+| **Frontend (prod)** | `https://sistema-vouchers-thecrc.vercel.app` |
+| **Backend (prod)** | `https://vouchers-api-production-d78f.up.railway.app` |
 | **GitHub** | `https://github.com/brodriguez7301-dot/sistema-vouchers-thecrc` |
 | **Default admin** | `admin@thecrc.com` / `Admin2026!` |
 

@@ -37,11 +37,7 @@ export default function VouchersPage() {
   const load = () =>
     api.getVouchers().then(vs => { setAllVouchers(vs); setVouchers(vs); }).catch(console.error);
 
-  useEffect(() => {
-    load();
-    const interval = setInterval(load, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  useEffect(() => { load(); }, []);
 
   // Apply filters client-side
   useEffect(() => {
@@ -315,12 +311,17 @@ export default function VouchersPage() {
                   <td className="table-td">
                     <StatusBadge status={v.status} />
                     {v.provider_confirmed ? (
-                      <div className="mt-1 flex items-center gap-1 bg-green-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full w-fit">
-                        ✓ Proveedor confirmó
+                      <div className="mt-1">
+                        <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">
+                          ✓ Confirmado
+                        </span>
+                        {v.provider_confirmed_at && (
+                          <div className="text-[10px] text-gray-400 mt-0.5">
+                            {new Date(v.provider_confirmed_at).toLocaleString("es-CR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <div className="mt-1 text-[10px] text-amber-500 font-medium">⏳ Sin confirmar</div>
-                    )}
+                    ) : null}
                   </td>
                   <td className="table-td" onClick={e => e.stopPropagation()}>
                     <div className="flex gap-2 items-center">

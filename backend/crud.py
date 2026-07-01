@@ -215,7 +215,7 @@ def generate_pdf_bytes_for_voucher(db: Session, voucher_id: int) -> Optional[tup
         "provider_confirmed_at": str(v.provider_confirmed_at) if v.provider_confirmed_at else None,
     }
     photo_path = v.guest_photo_url if v.guest_photo_url else None
-    pdf_bytes = generate_voucher_pdf(data, photo_path, frontend_url=settings.frontend_url)
+    pdf_bytes = generate_voucher_pdf(data, photo_path)
     if not v.pdf_generated:
         v.pdf_generated = True
         db.commit()
