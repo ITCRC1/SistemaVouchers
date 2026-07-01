@@ -19,7 +19,7 @@ LIGHT_GRAY = HexColor("#DDDDDD")
 NAVY = HexColor("#002147")
 
 
-def generate_voucher_pdf(voucher_data: dict, photo_path: str | None = None) -> bytes:
+def generate_voucher_pdf(voucher_data: dict, photo_path: str | None = None, frontend_url: str = "https://vouchers.thecostaricacollection.com") -> bytes:
     buf = BytesIO()
     w, h = landscape(A5)  # 595 x 420 pt approx
     c = canvas.Canvas(buf, pagesize=landscape(A5))
@@ -114,7 +114,7 @@ def generate_voucher_pdf(voucher_data: dict, photo_path: str | None = None) -> b
     qr_y   = qr_top - qr_size
     try:
         consecutive = voucher_data.get("consecutive_number", "")
-        qr_data = f"https://sistema-vouchers-thecrc.vercel.app/v/{consecutive}"
+        qr_data = f"{frontend_url.rstrip('/')}/v/{consecutive}"
         qr_bytes = generate_qr_bytes(qr_data)
         qr_img = ImageReader(BytesIO(qr_bytes))
         c.drawImage(qr_img, qr_x, qr_y, width=qr_size, height=qr_size)

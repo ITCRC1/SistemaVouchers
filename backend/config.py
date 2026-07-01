@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     secret_key: str = "change-this-secret-key"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 1440
-    api_url: str = "http://localhost:8000"
-    frontend_url: str = "http://localhost:3000"
+    api_url: str = "https://sistema-vouchers-backend-production.up.railway.app"
+    frontend_url: str = "https://vouchers.thecostaricacollection.com"
     upload_dir: str = "uploads/voucher-photos"
     pdf_dir: str = "uploads/vouchers-pdf"
     max_file_size: int = 5242880
