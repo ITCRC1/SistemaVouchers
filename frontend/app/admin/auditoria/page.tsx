@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import StatusBadge from "@/components/StatusBadge";
+import TableSkeleton from "@/components/TableSkeleton";
 import { api } from "@/lib/api";
 import type { Voucher, AuditStatus } from "@/lib/types";
 import { CHANNEL_LABELS, AUDIT_STATUS_LABELS, AUDIT_STATUS_COLORS } from "@/lib/types";
@@ -200,9 +200,7 @@ export default function AuditoriaPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {loading && (
-                <tr><td colSpan={14} className="table-td text-center text-gray-400 py-8">Cargando…</td></tr>
-              )}
+              {loading && <TableSkeleton cols={14} rows={6} />}
               {!loading && displayed.map(v => {
                 const gp = v.guest_price ?? null;
                 const cp = v.unit_price;

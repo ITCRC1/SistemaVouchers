@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import StatusBadge from "@/components/StatusBadge";
+import TableSkeleton from "@/components/TableSkeleton";
 import { api } from "@/lib/api";
 
 import type { Voucher, Provider, Service } from "@/lib/types";
@@ -28,14 +29,20 @@ export default function VouchersPage() {
   const [showForm, setShowForm]     = useState(false);
   const [saving, setSaving]         = useState(false);
   const [error, setError]           = useState("");
+  const [loading, setLoading] = useState(true);
   const [generatingPdf, setGeneratingPdf] = useState<number | null>(null);
   const [statusFilter, setStatusFilter]   = useState("");
   const [userFilter, setUserFilter]       = useState("");
   const [search, setSearch]         = useState("");
   const [form, setForm] = useState({ ...EMPTY_FORM });
 
-  const load = () =>
-    api.getVouchers().then(vs => { setAllVouchers(vs); setVouchers(vs); }).catch(console.error);
+  const load = () => {
+    setLoading(true);
+    api.getVouchers()
+      .then(vs => { setAllVouchers(vs); setVouchers(vs); })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => { load(); }, []);
 
@@ -288,7 +295,8 @@ export default function VouchersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {vouchers.map(v => (
+              {loading && <TableSkeleton cols={9} rows={6} />}
+              {!loading && vouchers.map(v => (
                 <tr key={v.voucher_id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setDetail(v)}>
                   <td className="table-td font-bold text-[#FF0000] font-mono text-xs underline decoration-dotted">{v.consecutive_number}</td>
                   <td className="table-td font-medium">{v.guest_name}</td>
@@ -337,7 +345,7 @@ export default function VouchersPage() {
                   </td>
                 </tr>
               ))}
-              {vouchers.length === 0 && (
+              {!loading && vouchers.length === 0 && (
                 <tr><td colSpan={9} className="table-td text-center text-gray-400 py-8">Sin vouchers</td></tr>
               )}
             </tbody>

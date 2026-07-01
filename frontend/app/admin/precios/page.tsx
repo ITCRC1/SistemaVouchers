@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { Service } from "@/lib/types";
+import TableSkeleton from "@/components/TableSkeleton";
 
 const CHANNELS = [
   { key: "price_agency_shared",  label: "Agencia Compartido",  color: "text-purple-700" },
@@ -18,6 +19,7 @@ type Row = Service & Record<ChannelKey, number | null>;
 export default function PreciosPage() {
   const [year, setYear]       = useState(2026);
   const [rows, setRows]       = useState<Row[]>([]);
+  const [loading, setLoading] = useState(true);
   const [edits, setEdits]     = useState<Record<string, string>>({});
   const [saving, setSaving]   = useState<string | null>(null);
   const [saved,  setSaved]    = useState<string | null>(null);
@@ -26,6 +28,7 @@ export default function PreciosPage() {
 
   const load = () => {
     setLoadError("");
+    setLoading(true);
     api.getServices().then(svcs => {
       const filtered = svcs.filter((s: Service) => s.year === year) as Row[];
       setRows(filtered);
@@ -37,7 +40,8 @@ export default function PreciosPage() {
         });
       });
       setEdits(init);
-    }).catch(err => setLoadError(err instanceof Error ? err.message : "Error al cargar tarifas"));
+    }).catch(err => setLoadError(err instanceof Error ? err.message : "Error al cargar tarifas"))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, [year]);
@@ -110,6 +114,7 @@ export default function PreciosPage() {
                 <th className="px-4 py-2 text-center bg-green-50">Regular Rack</th>
               </tr>
             </thead>
+            {loading ? <TableSkeleton cols={8} rows={6} /> : (
             <tbody className="divide-y divide-gray-100">
               {visible.length === 0 && (
                 <tr><td colSpan={8} className="text-center text-gray-400 py-10">
@@ -153,6 +158,7 @@ export default function PreciosPage() {
                 </tr>
               ))}
             </tbody>
+            )}
           </table>
         </div>
       </div>

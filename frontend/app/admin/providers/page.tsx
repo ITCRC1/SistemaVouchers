@@ -2,17 +2,22 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { Provider } from "@/lib/types";
+import TableSkeleton from "@/components/TableSkeleton";
 
 const TYPES = ["TOUR", "TRANSPORT", "OTHER"];
 
 export default function ProvidersPage() {
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [loading, setLoading]     = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", provider_type: "TOUR", contact_email: "", contact_phone: "", bank_account: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const load = () => api.getProviders(false).then(setProviders).catch(console.error);
+  const load = () => {
+    setLoading(true);
+    api.getProviders(false).then(setProviders).catch(console.error).finally(() => setLoading(false));
+  };
   useEffect(() => { load(); }, []);
 
   async function handleSave(e: React.FormEvent) {
@@ -78,6 +83,7 @@ export default function ProvidersPage() {
               <th className="table-th">Acciones</th>
             </tr>
           </thead>
+          {loading ? <TableSkeleton cols={6} rows={5} /> : (
           <tbody className="divide-y divide-gray-100">
             {providers.map(p => (
               <tr key={p.provider_id} className="hover:bg-gray-50">
@@ -101,6 +107,7 @@ export default function ProvidersPage() {
               <tr><td colSpan={6} className="table-td text-center text-gray-400 py-8">Sin proveedores registrados</td></tr>
             )}
           </tbody>
+          )}
         </table>
         </div>
       </div>

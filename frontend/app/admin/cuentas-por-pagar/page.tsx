@@ -181,7 +181,18 @@ export default function CuentasPorPagarPage() {
         </div>
       </div>
 
-      {loading && <div className="text-center text-gray-400 py-12">Cargando…</div>}
+      {loading && (
+        <div className="space-y-4">
+          {[1,2,3].map(i => (
+            <div key={i} className="card animate-pulse">
+              <div className="h-4 bg-gray-200 rounded w-1/3 mb-4" />
+              <div className="space-y-2">
+                {[1,2,3,4].map(j => <div key={j} className="h-3 bg-gray-100 rounded" style={{width:`${70+j*7}%`}} />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {!loading && groups.length === 0 && (
         <div className="card text-center text-gray-400 py-12">

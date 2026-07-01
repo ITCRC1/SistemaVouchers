@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { Service } from "@/lib/types";
+import TableSkeleton from "@/components/TableSkeleton";
 
 const SERVICE_TYPES = ["TOUR", "TRANSPORT", "ACTIVITY", "OTHER"];
 const CATEGORIES    = ["TOURS", "SPA", "TRANSFERS", "OTHERS"];
 
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading]   = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     service_name: "", service_type: "TOUR", description: "",
@@ -16,7 +18,10 @@ export default function ServicesPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError]   = useState("");
 
-  const load = () => api.getServices().then(setServices).catch(console.error);
+  const load = () => {
+    setLoading(true);
+    api.getServices().then(setServices).catch(console.error).finally(() => setLoading(false));
+  };
   useEffect(() => { load(); }, []);
 
   async function handleSave(e: React.FormEvent) {
@@ -87,6 +92,7 @@ export default function ServicesPage() {
                 <th className="table-th">Estado</th>
               </tr>
             </thead>
+            {loading ? <TableSkeleton cols={5} rows={5} /> : (
             <tbody className="divide-y divide-gray-100">
               {services.map(s => (
                 <tr key={s.service_id} className="hover:bg-gray-50">
@@ -110,6 +116,7 @@ export default function ServicesPage() {
                 <tr><td colSpan={5} className="table-td text-center text-gray-400 py-8">Sin servicios</td></tr>
               )}
             </tbody>
+            )}
           </table>
         </div>
       </div>
