@@ -113,6 +113,8 @@ def delete_user(
     user = crud.get_user_by_id(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    if user.username == "admin":
+        raise HTTPException(status_code=403, detail="El usuario administrador del sistema no puede eliminarse")
     db.delete(user)
     db.commit()
 

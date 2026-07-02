@@ -240,7 +240,7 @@ export default function UsuariosPage() {
                       className="text-xs text-[#0066CC] hover:underline">
                       Editar
                     </button>
-                    {u.user_id !== me?.user_id && (
+                    {u.user_id !== me?.user_id && u.username !== "admin" && (
                       <>
                         <button onClick={() => toggleActive(u)}
                           className={`text-xs hover:underline ${u.is_active ? "text-amber-500" : "text-green-600"}`}>
