@@ -9,6 +9,7 @@ import json
 from decimal import Decimal
 
 from utils.qr_generator import generate_qr_bytes
+from config import settings
 
 # Colors
 RED = HexColor("#FF0000")
@@ -114,7 +115,7 @@ def generate_voucher_pdf(voucher_data: dict, photo_path: str | None = None) -> b
     qr_y   = qr_top - qr_size
     try:
         consecutive = voucher_data.get("consecutive_number", "")
-        qr_data = f"{frontend_url.rstrip('/')}/v/{consecutive}"
+        qr_data = f"{settings.frontend_url.rstrip('/')}/v/{consecutive}"
         qr_bytes = generate_qr_bytes(qr_data)
         qr_img = ImageReader(BytesIO(qr_bytes))
         c.drawImage(qr_img, qr_x, qr_y, width=qr_size, height=qr_size)

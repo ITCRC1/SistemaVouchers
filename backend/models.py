@@ -5,6 +5,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from database import Base
 import enum
+from datetime import datetime
 
 
 class ProviderType(str, enum.Enum):
@@ -83,7 +84,7 @@ class Service(Base):
     # Catalog fields
     pricing_code = Column(String(20), nullable=True, index=True)
     category = Column(String(50), nullable=True)   # TOURS, SPA, TRANSFERS, OTHERS
-    year = Column(Integer, default=2026, nullable=False)
+    year = Column(Integer, default=lambda: datetime.now().year, nullable=False)
     service_name = Column(String(200), nullable=False)
     service_type = Column(SAEnum(ServiceType), nullable=False)
     description = Column(Text)

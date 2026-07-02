@@ -17,7 +17,7 @@ type ChannelKey = typeof CHANNELS[number]["key"];
 type Row = Service & Record<ChannelKey, number | null>;
 
 export default function PreciosPage() {
-  const [year, setYear]       = useState(2026);
+  const [year, setYear]       = useState(() => new Date().getFullYear());
   const [rows, setRows]       = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [edits, setEdits]     = useState<Record<string, string>>({});
@@ -72,7 +72,7 @@ export default function PreciosPage() {
         <h1 className="text-2xl font-bold">Tarifario Aprobado</h1>
         <div className="flex gap-2 items-center">
           <label className="text-xs text-gray-500">Año:</label>
-          {[2026, 2027].map(y => (
+          {[new Date().getFullYear(), new Date().getFullYear() + 1].map(y => (
             <button key={y} onClick={() => setYear(y)}
               className={`px-3 py-1 rounded-lg text-sm font-semibold border transition-colors ${year === y ? "bg-[#0066CC] text-white border-[#0066CC]" : "bg-white text-gray-600 border-gray-300 hover:border-[#0066CC]"}`}>
               {y}
