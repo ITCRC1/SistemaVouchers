@@ -33,33 +33,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 print("🚀  Iniciando seed de producción...")
 
 # ══════════════════════════════════════════════════════════════════════════════
-# 1. USUARIOS
-# ══════════════════════════════════════════════════════════════════════════════
-users_data = [
-    {"email": "admin@thecrc.com",      "name": "Administrador CRC",  "role": "admin",      "password": "Admin2026!"},
-    {"email": "frontdesk@thecrc.com",  "name": "Front Desk CWL",     "role": "front_desk", "password": "Frontdesk2026!"},
-    {"email": "auditor@thecrc.com",    "name": "Auditor CRC",        "role": "auditor",    "password": "Auditor2026!"},
-]
-
-for u in users_data:
-    existing = db.query(User).filter(User.email == u["email"]).first()
-    if not existing:
-        user = User(
-            email=u["email"],
-            name=u["name"],
-            role=u["role"],
-            hashed_password=pwd_context.hash(u["password"]),
-            is_active=True,
-        )
-        db.add(user)
-        print(f"  ✅  Usuario creado: {u['email']}")
-    else:
-        print(f"  ⏭️   Usuario ya existe: {u['email']}")
-
-db.commit()
-
-# ══════════════════════════════════════════════════════════════════════════════
-# 2. PROVEEDORES (de Proveedores_de_Servicios_CWL.xlsx)
+# 1. PROVEEDORES (de Proveedores_de_Servicios_CWL.xlsx)
 # ══════════════════════════════════════════════════════════════════════════════
 providers_data = [
     # Transporte Terrestre

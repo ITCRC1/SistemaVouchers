@@ -84,47 +84,56 @@ def root():
 
 @app.on_event("startup")
 def seed_admin():
+    import os, secrets
     from database import SessionLocal
     from crud import get_user_by_email, create_user
     from schemas import UserCreate
     from api.auth import hash_password
-    import bcrypt as _bcrypt  # suppress passlib warning
 
     db = SessionLocal()
     try:
         from crud import update_user as _upd
-        # Admin
-        if not get_user_by_email(db, "admin@thecrc.com"):
-            create_user(db, UserCreate(
-                email="admin@thecrc.com",
-                username="admin",
-                name="Administrador",
-                password="Admin2026!",
-                role="admin",
-            ), hash_password("Admin2026!"))
-            print("✓ Admin user created")
-        else:
-            u = get_user_by_email(db, "admin@thecrc.com")
-            if not u.username:
-                _upd(db, u.user_id, {"username": "admin"})
 
-        # jretana — siempre sincroniza username, contraseña y rol
+        # Admin
+        admin = get_user_by_email(db, "admin@thecrc.com")
+        if not admin:
+            pwd = os.getenv("SEED_ADMIN_PASSWORD") or secrets.token_urlsafe(16)
+            create_user(db, UserCreate(
+                email="admin@thecrc.com", username="admin",
+                name="Administrador", password=pwd, role="admin",
+            ), hash_password(pwd))
+            print(f"✓ Admin user created")
+        else:
+            updates: dict = {}
+            if not admin.username:
+                updates["username"] = "admin"
+            env_pwd = os.getenv("SEED_ADMIN_PASSWORD")
+            if env_pwd:
+                updates["hashed_password"] = hash_password(env_pwd)
+            if updates:
+                _upd(db, admin.user_id, updates)
+
+        # jretana
         jretana = get_user_by_email(db, "jretana@thecrc.com")
         if not jretana:
+            pwd = os.getenv("SEED_JRETANA_PASSWORD") or secrets.token_urlsafe(16)
             jretana = create_user(db, UserCreate(
-                email="jretana@thecrc.com",
-                username="jretana",
-                name="J. Retana",
-                password="Puravida*",
-                role="admin",
-            ), hash_password("Puravida*"))
+                email="jretana@thecrc.com", username="jretana",
+                name="J. Retana", password=pwd, role="admin",
+            ), hash_password(pwd))
             print("✓ User jretana created")
-        _upd(db, jretana.user_id, {
-            "username": "jretana",
-            "hashed_password": hash_password("Puravida*"),
-            "role": "admin",
-        })
-        print("✓ jretana synced (username + password)")
+        else:
+            updates = {}
+            if not jretana.username:
+                updates["username"] = "jretana"
+            if jretana.role != "admin":
+                updates["role"] = "admin"
+            env_pwd = os.getenv("SEED_JRETANA_PASSWORD")
+            if env_pwd:
+                updates["hashed_password"] = hash_password(env_pwd)
+            if updates:
+                _upd(db, jretana.user_id, updates)
+                print("✓ jretana synced")
     except Exception as e:
         print(f"Seed warning: {e}")
     finally:
