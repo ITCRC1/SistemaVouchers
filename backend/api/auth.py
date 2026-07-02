@@ -94,6 +94,8 @@ def update_user(
     if user_id == current_user.user_id and data.is_active is False:
         raise HTTPException(status_code=400, detail="No puedes desactivar tu propia cuenta")
     updates = data.model_dump(exclude_none=True)
+    if "username" in updates:
+        updates["username"] = updates["username"].lower()
     if "password" in updates:
         updates["hashed_password"] = hash_password(updates.pop("password"))
     user = crud.update_user(db, user_id, updates)

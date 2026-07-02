@@ -23,11 +23,11 @@ def get_user_by_email(db: Session, email: str) -> Optional[User]:
 
 
 def get_user_by_username(db: Session, username: str) -> Optional[User]:
-    return db.query(User).filter(User.username == username).first()
+    return db.query(User).filter(func.lower(User.username) == username.lower()).first()
 
 
 def get_user_by_identifier(db: Session, identifier: str) -> Optional[User]:
-    """Login por email o por username."""
+    """Login por email o por username (case-insensitive)."""
     return get_user_by_email(db, identifier) or get_user_by_username(db, identifier)
 
 
@@ -51,10 +51,11 @@ def update_user(db: Session, user_id: int, updates: dict) -> Optional[User]:
 
 
 def create_user(db: Session, data: schemas.UserCreate, hashed_password: str) -> User:
-    email = data.email or f"{data.username}@vouchers.internal"
+    username = data.username.lower() if data.username else None
+    email = data.email or f"{username}@vouchers.internal"
     user = User(
         email=email,
-        username=data.username or None,
+        username=username,
         name=data.name,
         hashed_password=hashed_password,
         role=data.role,

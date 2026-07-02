@@ -113,7 +113,7 @@ return (
               <div>
                 <label className="text-xs text-gray-500 block mb-1">Usuario</label>
                 <input required placeholder="ej. jretana" value={createForm.username}
-                  onChange={e => setCreateForm(f => ({ ...f, username: e.target.value.toLowerCase().replace(/\s/g, "") }))}
+                  onChange={e => setCreateForm(f => ({ ...f, username: e.target.value.replace(/\s/g, "") }))}
                   className="w-full border rounded-lg px-3 py-2 text-sm font-mono" />
               </div>
               <div>
@@ -158,7 +158,7 @@ return (
               <div>
                 <label className="text-xs text-gray-500 block mb-1">Usuario</label>
                 <input required value={editForm.username}
-                  onChange={e => setEditForm(f => ({ ...f, username: e.target.value.toLowerCase().replace(/\s/g, "") }))}
+                  onChange={e => setEditForm(f => ({ ...f, username: e.target.value.replace(/\s/g, "") }))}
                   className="w-full border rounded-lg px-3 py-2 text-sm font-mono" />
               </div>
               <div>
