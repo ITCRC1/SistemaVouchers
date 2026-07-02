@@ -1,16 +1,24 @@
 "use client";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { getStoredUser } from "@/lib/auth";
+import { getStoredUser, logout } from "@/lib/auth";
 import Navbar from "./Navbar";
 
-// useLayoutEffect fires before browser paint; fall back to useEffect on server (it won't run there)
 const useSyncEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+const IDLE_MS  = 60_000;
+const WARN_MS  = 10_000;
 
 export default function AppShell({ children, roles }: { children: React.ReactNode; roles?: string[] }) {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [ready, setReady]           = useState(false);
+  const [menuOpen, setMenuOpen]     = useState(false);
+  const [warnVisible, setWarnVisible] = useState(false);
+  const [countdown, setCountdown]   = useState(WARN_MS / 1000);
+
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const warnRef  = useRef<ReturnType<typeof setTimeout>>();
+  const tickRef  = useRef<ReturnType<typeof setInterval>>();
 
   useSyncEffect(() => {
     const user = getStoredUser();
@@ -21,6 +29,39 @@ export default function AppShell({ children, roles }: { children: React.ReactNod
     router.replace("/login");
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const resetIdle = useCallback(() => {
+    clearTimeout(timerRef.current);
+    clearTimeout(warnRef.current);
+    clearInterval(tickRef.current);
+    setWarnVisible(false);
+    setCountdown(WARN_MS / 1000);
+
+    warnRef.current = setTimeout(() => {
+      setWarnVisible(true);
+      let t = WARN_MS / 1000;
+      tickRef.current = setInterval(() => {
+        t--;
+        setCountdown(t);
+        if (t <= 0) clearInterval(tickRef.current);
+      }, 1000);
+    }, IDLE_MS - WARN_MS);
+
+    timerRef.current = setTimeout(logout, IDLE_MS);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll", "click"] as const;
+    events.forEach(e => window.addEventListener(e, resetIdle, { passive: true }));
+    resetIdle();
+    return () => {
+      events.forEach(e => window.removeEventListener(e, resetIdle));
+      clearTimeout(timerRef.current);
+      clearTimeout(warnRef.current);
+      clearInterval(tickRef.current);
+    };
+  }, [ready, resetIdle]);
 
   if (!ready) return null;
 
@@ -58,6 +99,22 @@ export default function AppShell({ children, roles }: { children: React.ReactNod
 
         <main className="flex-1 overflow-auto bg-gray-50 p-4 md:p-8">{children}</main>
       </div>
+
+      {/* Idle warning overlay */}
+      {warnVisible && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100]">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center">
+            <div className="text-5xl font-bold text-[#002147] mb-3">{countdown}</div>
+            <h2 className="text-lg font-bold mb-2">Tu sesión está por cerrar</h2>
+            <p className="text-sm text-gray-500 mb-6">
+              Por inactividad, la sesión cerrará automáticamente.
+            </p>
+            <button onClick={resetIdle} className="btn-primary w-full">
+              Seguir conectado
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
