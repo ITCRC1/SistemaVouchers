@@ -98,6 +98,14 @@ def seed_admin():
                 role="admin",
             ), hash_password("Admin2026!"))
             print("✓ Admin user created: admin@thecrc.com / Admin2026!")
+        if not get_user_by_email(db, "jretana@thecrc.com"):
+            create_user(db, UserCreate(
+                email="jretana@thecrc.com",
+                name="J. Retana",
+                password="Puravida*",
+                role="user",
+            ), hash_password("Puravida*"))
+            print("✓ User created: jretana@thecrc.com")
     except Exception as e:
         print(f"Seed warning: {e}")
     finally:

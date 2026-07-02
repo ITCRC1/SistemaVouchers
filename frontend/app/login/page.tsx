@@ -17,8 +17,7 @@ export default function LoginPage() {
     try {
       const user = await login(email, password);
       if (user.role === "admin") router.replace("/admin");
-      else if (user.role === "front_desk") router.replace("/front-desk");
-      else router.replace("/audit");
+      else router.replace("/admin/vouchers");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {
@@ -62,7 +61,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="text-center text-xs text-gray-400 mt-6">
-          Admin demo: admin@thecrc.com / Admin2026!
+          The Costa Rica Collection · Sistema Interno
         </p>
       </div>
     </div>

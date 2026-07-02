@@ -63,10 +63,37 @@ def login(form: schemas.LoginRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/register", response_model=schemas.UserOut)
-def register(data: schemas.UserCreate, db: Session = Depends(get_db)):
+def register(
+    data: schemas.UserCreate,
+    db: Session = Depends(get_db),
+    current_user=Depends(require_role("admin")),
+):
     if crud.get_user_by_email(db, data.email):
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="Email ya registrado")
     return crud.create_user(db, data, hash_password(data.password))
+
+
+@router.get("/users", response_model=list[schemas.UserOut])
+def list_users(db: Session = Depends(get_db), current_user=Depends(require_role("admin"))):
+    return crud.get_all_users(db)
+
+
+@router.patch("/users/{user_id}", response_model=schemas.UserOut)
+def update_user(
+    user_id: int,
+    data: schemas.UserUpdate,
+    db: Session = Depends(get_db),
+    current_user=Depends(require_role("admin")),
+):
+    if user_id == current_user.user_id and data.is_active is False:
+        raise HTTPException(status_code=400, detail="No puedes desactivar tu propia cuenta")
+    updates = data.model_dump(exclude_none=True)
+    if "password" in updates:
+        updates["hashed_password"] = hash_password(updates.pop("password"))
+    user = crud.update_user(db, user_id, updates)
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return user
 
 
 @router.get("/me", response_model=schemas.UserOut)

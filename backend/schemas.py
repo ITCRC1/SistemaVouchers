@@ -11,7 +11,14 @@ class UserCreate(BaseModel):
     email: str
     name: str
     password: str
-    role: str = "front_desk"
+    role: str = "user"
+
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+    password: Optional[str] = None
 
 
 class UserOut(BaseModel):

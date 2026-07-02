@@ -31,6 +31,9 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
   me: () => request<import("./types").User>("/api/auth/me"),
+  getUsers: () => request<import("./types").User[]>("/api/auth/users"),
+  createUser: (data: unknown) => request<import("./types").User>("/api/auth/register", { method: "POST", body: JSON.stringify(data) }),
+  updateUser: (id: number, data: unknown) => request<import("./types").User>(`/api/auth/users/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
 
   // Providers
   getProviders: (activeOnly = true) => request<import("./types").Provider[]>(`/api/providers/?active_only=${activeOnly}`),

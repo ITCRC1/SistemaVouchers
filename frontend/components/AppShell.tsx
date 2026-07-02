@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getStoredUser, login } from "@/lib/auth";
+import { getStoredUser } from "@/lib/auth";
 import Navbar from "./Navbar";
 
 // useLayoutEffect fires before browser paint; fall back to useEffect on server (it won't run there)
@@ -18,22 +18,7 @@ export default function AppShell({ children, roles }: { children: React.ReactNod
       setReady(true);
       return;
     }
-    (async () => {
-      let u = user;
-      if (!u) {
-        try {
-          u = await login("admin@thecrc.com", "Admin2026!");
-        } catch {
-          router.replace("/login");
-          return;
-        }
-      }
-      if (roles && !roles.includes(u!.role)) {
-        router.replace("/login");
-        return;
-      }
-      setReady(true);
-    })();
+    router.replace("/login");
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

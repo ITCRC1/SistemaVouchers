@@ -7,19 +7,24 @@ import clsx from "clsx";
 const NAV: Record<string, { label: string; href: string }[]> = {
   admin: [
     { label: "Dashboard", href: "/admin" },
-    { label: "Proveedores", href: "/admin/providers" },
-    { label: "Servicios", href: "/admin/services" },
-    { label: "Tarifas", href: "/admin/precios" },
     { label: "Vouchers", href: "/admin/vouchers" },
     { label: "Auditoría", href: "/admin/auditoria" },
     { label: "Cuentas por Pagar", href: "/admin/cuentas-por-pagar" },
     { label: "Provisiones", href: "/admin/provisiones" },
     { label: "Reportes", href: "/admin/reports" },
-    { label: "❓  Centro de Ayuda", href: "/admin/ayuda" },
+    { label: "Proveedores", href: "/admin/providers" },
+    { label: "Servicios", href: "/admin/services" },
+    { label: "Tarifas", href: "/admin/precios" },
+    { label: "Usuarios", href: "/admin/usuarios" },
+    { label: "Centro de Ayuda", href: "/admin/ayuda" },
+  ],
+  user: [
+    { label: "Vouchers", href: "/admin/vouchers" },
+    { label: "Centro de Ayuda", href: "/admin/ayuda" },
   ],
   concierge: [
     { label: "Vouchers", href: "/admin/vouchers" },
-    { label: "❓  Centro de Ayuda", href: "/admin/ayuda" },
+    { label: "Centro de Ayuda", href: "/admin/ayuda" },
   ],
   front_desk: [
     { label: "Registrar Uso", href: "/front-desk" },
@@ -27,7 +32,7 @@ const NAV: Record<string, { label: string; href: string }[]> = {
   auditor: [
     { label: "Auditoría", href: "/audit" },
     { label: "Reportes", href: "/admin/reports" },
-    { label: "❓  Centro de Ayuda", href: "/admin/ayuda" },
+    { label: "Centro de Ayuda", href: "/admin/ayuda" },
   ],
 };
 

@@ -22,6 +22,25 @@ def get_user_by_email(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
 
 
+def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
+    return db.query(User).filter(User.user_id == user_id).first()
+
+
+def get_all_users(db: Session):
+    return db.query(User).order_by(User.name).all()
+
+
+def update_user(db: Session, user_id: int, updates: dict) -> Optional[User]:
+    user = get_user_by_id(db, user_id)
+    if not user:
+        return None
+    for k, v in updates.items():
+        setattr(user, k, v)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
 def create_user(db: Session, data: schemas.UserCreate, hashed_password: str) -> User:
     user = User(
         email=data.email,
