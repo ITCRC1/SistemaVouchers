@@ -3,6 +3,7 @@ export type Role = "admin" | "user" | "front_desk" | "auditor";
 export interface User {
   user_id: number;
   email: string;
+  username?: string;
   name: string;
   role: Role;
   is_active: boolean;

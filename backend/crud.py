@@ -22,6 +22,15 @@ def get_user_by_email(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
 
 
+def get_user_by_username(db: Session, username: str) -> Optional[User]:
+    return db.query(User).filter(User.username == username).first()
+
+
+def get_user_by_identifier(db: Session, identifier: str) -> Optional[User]:
+    """Login por email o por username."""
+    return get_user_by_email(db, identifier) or get_user_by_username(db, identifier)
+
+
 def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
     return db.query(User).filter(User.user_id == user_id).first()
 
@@ -44,6 +53,7 @@ def update_user(db: Session, user_id: int, updates: dict) -> Optional[User]:
 def create_user(db: Session, data: schemas.UserCreate, hashed_password: str) -> User:
     user = User(
         email=data.email,
+        username=data.username or None,
         name=data.name,
         hashed_password=hashed_password,
         role=data.role,

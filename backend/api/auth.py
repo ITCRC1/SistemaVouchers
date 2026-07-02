@@ -55,9 +55,11 @@ def require_role(*roles: str):
 
 @router.post("/login", response_model=schemas.Token)
 def login(form: schemas.LoginRequest, db: Session = Depends(get_db)):
-    user = crud.get_user_by_email(db, form.email)
+    user = crud.get_user_by_identifier(db, form.email)
     if not user or not verify_password(form.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos")
+    if not user.is_active:
+        raise HTTPException(status_code=401, detail="Cuenta desactivada")
     token = create_access_token({"sub": user.email, "role": user.role})
     return {"access_token": token, "token_type": "bearer", "user": user}
 

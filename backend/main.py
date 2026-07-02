@@ -43,6 +43,8 @@ with engine.connect() as conn:
         "ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS provider_confirmed BOOLEAN DEFAULT FALSE",
         "ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS provider_confirmed_at TIMESTAMP",
         "ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS provider_confirmed_ip VARCHAR(45)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(50)",
+        "CREATE UNIQUE INDEX IF NOT EXISTS ix_users_username ON users(username) WHERE username IS NOT NULL",
     ]:
         try:
             conn.execute(_sql(stmt))
@@ -99,13 +101,15 @@ def seed_admin():
             ), hash_password("Admin2026!"))
             print("✓ Admin user created: admin@thecrc.com / Admin2026!")
         if not get_user_by_email(db, "jretana@thecrc.com"):
-            create_user(db, UserCreate(
+            u = create_user(db, UserCreate(
                 email="jretana@thecrc.com",
                 name="J. Retana",
                 password="Puravida*",
                 role="user",
             ), hash_password("Puravida*"))
-            print("✓ User created: jretana@thecrc.com")
+            from crud import update_user as _upd
+            _upd(db, u.user_id, {"username": "jretana"})
+            print("✓ User created: jretana / jretana@thecrc.com")
     except Exception as e:
         print(f"Seed warning: {e}")
     finally:

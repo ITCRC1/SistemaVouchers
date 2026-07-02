@@ -12,7 +12,7 @@ const ROLES = [
 const roleLabel = (r: string) => ROLES.find(x => x.value === r)?.label ?? r;
 const roleColor = (r: string) => ROLES.find(x => x.value === r)?.color ?? "bg-gray-100 text-gray-600";
 
-const EMPTY_FORM = { name: "", email: "", password: "", role: "user" };
+const EMPTY_FORM = { name: "", email: "", username: "", password: "", role: "user" };
 
 export default function UsuariosPage() {
   const [users, setUsers]       = useState<User[]>([]);
@@ -94,7 +94,15 @@ export default function UsuariosPage() {
                   className="w-full border rounded-lg px-3 py-2 text-sm" />
               </div>
               <div>
-                <label className="text-xs text-gray-500 block mb-1">Email (se usa para iniciar sesión)</label>
+                <label className="text-xs text-gray-500 block mb-1">
+                  Usuario <span className="text-gray-400">(para iniciar sesión sin @)</span>
+                </label>
+                <input placeholder="ej. jretana" value={form.username}
+                  onChange={e => setForm(f => ({ ...f, username: e.target.value.toLowerCase().replace(/\s/g, "") }))}
+                  className="w-full border rounded-lg px-3 py-2 text-sm font-mono" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1">Email</label>
                 <input required type="email" placeholder="usuario@thecrc.com" value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                   className="w-full border rounded-lg px-3 py-2 text-sm" />
@@ -154,7 +162,7 @@ export default function UsuariosPage() {
           <thead className="bg-gray-50 border-b">
             <tr>
               <th className="table-th">Nombre</th>
-              <th className="table-th">Email</th>
+              <th className="table-th">Usuario / Email</th>
               <th className="table-th">Rol</th>
               <th className="table-th text-center">Estado</th>
               <th className="table-th text-center">Acciones</th>
@@ -172,7 +180,12 @@ export default function UsuariosPage() {
                     <span className="ml-2 text-xs text-blue-500">(tú)</span>
                   )}
                 </td>
-                <td className="table-td text-gray-500 font-mono text-xs">{u.email}</td>
+                <td className="table-td">
+                  {u.username && (
+                    <div className="font-mono text-sm font-semibold text-[#002147]">{u.username}</div>
+                  )}
+                  <div className="text-xs text-gray-400">{u.email}</div>
+                </td>
                 <td className="table-td">
                   {u.user_id === me?.user_id ? (
                     <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${roleColor(u.role)}`}>

@@ -9,6 +9,7 @@ from models import ProviderType, ServiceType, VoucherStatus, UsageStatus, Valida
 
 class UserCreate(BaseModel):
     email: str
+    username: Optional[str] = None
     name: str
     password: str
     role: str = "user"
@@ -16,6 +17,7 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None
+    username: Optional[str] = None
     role: Optional[str] = None
     is_active: Optional[bool] = None
     password: Optional[str] = None
@@ -24,6 +26,7 @@ class UserUpdate(BaseModel):
 class UserOut(BaseModel):
     user_id: int
     email: str
+    username: Optional[str] = None
     name: str
     role: str
     is_active: bool
