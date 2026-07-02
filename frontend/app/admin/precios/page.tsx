@@ -17,7 +17,9 @@ type ChannelKey = typeof CHANNELS[number]["key"];
 type Row = Service & Record<ChannelKey, number | null>;
 
 export default function PreciosPage() {
-  const [year, setYear]       = useState(() => new Date().getFullYear());
+  const thisYear = new Date().getFullYear();
+  const [year, setYear]       = useState(thisYear);
+  const [years, setYears]     = useState<number[]>([thisYear, thisYear + 1]);
   const [rows, setRows]       = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [edits, setEdits]     = useState<Record<string, string>>({});
@@ -30,6 +32,12 @@ export default function PreciosPage() {
     setLoadError("");
     setLoading(true);
     api.getServices().then(svcs => {
+      // Build year list from existing data, always include current and next year
+      const yearSet = new Set(svcs.map((s: Service) => s.year));
+      yearSet.add(thisYear);
+      yearSet.add(thisYear + 1);
+      setYears(Array.from(yearSet).sort((a, b) => a - b));
+
       const filtered = svcs.filter((s: Service) => s.year === year) as Row[];
       setRows(filtered);
       const init: Record<string, string> = {};
@@ -72,7 +80,7 @@ export default function PreciosPage() {
         <h1 className="text-2xl font-bold">Tarifario Aprobado</h1>
         <div className="flex gap-2 items-center">
           <label className="text-xs text-gray-500">Año:</label>
-          {[new Date().getFullYear(), new Date().getFullYear() + 1].map(y => (
+          {years.map(y => (
             <button key={y} onClick={() => setYear(y)}
               className={`px-3 py-1 rounded-lg text-sm font-semibold border transition-colors ${year === y ? "bg-[#0066CC] text-white border-[#0066CC]" : "bg-white text-gray-600 border-gray-300 hover:border-[#0066CC]"}`}>
               {y}
@@ -118,7 +126,7 @@ export default function PreciosPage() {
             <tbody className="divide-y divide-gray-100">
               {visible.length === 0 && (
                 <tr><td colSpan={8} className="text-center text-gray-400 py-10">
-                  {year === 2027 ? "Sin tarifas 2027 — las puede ingresar aquí" : "Sin servicios"}
+                  {`Sin tarifas ${year} — agregue servicios con ese año en el Catálogo de Servicios`}
                 </td></tr>
               )}
               {visible.map(s => (
@@ -165,7 +173,7 @@ export default function PreciosPage() {
 
       <p className="text-xs text-gray-400 mt-3">
         Edite cualquier precio y presione Enter o salga del campo para guardar automáticamente.
-        Para agregar tarifas 2027 seleccione el año 2027 — los servicios aparecerán con campos en blanco listos para llenar.
+        Para agregar tarifas de un año nuevo, cree los servicios con ese año en el Catálogo de Servicios — aparecerán aquí con los campos en blanco listos para llenar.
       </p>
     </>
   );

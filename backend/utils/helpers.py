@@ -1,9 +1,13 @@
 from datetime import datetime
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from models import Voucher
 
 
 def generate_consecutive_number(db: Session) -> str:
+    # Advisory lock prevents two concurrent requests from generating the same number.
+    # Key 42 is arbitrary; PostgreSQL releases it automatically when the transaction ends.
+    db.execute(text("SELECT pg_advisory_xact_lock(42)"))
     year = datetime.now().year
     last = (
         db.query(Voucher)
