@@ -84,7 +84,7 @@ def root():
 
 @app.on_event("startup")
 def seed_admin():
-    import os, secrets
+    import secrets
     from database import SessionLocal
     from crud import get_user_by_email, create_user
     from schemas import UserCreate
@@ -94,46 +94,28 @@ def seed_admin():
     try:
         from crud import update_user as _upd
 
-        # Admin
-        admin = get_user_by_email(db, "admin@thecrc.com")
-        if not admin:
-            pwd = os.getenv("SEED_ADMIN_PASSWORD") or secrets.token_urlsafe(16)
-            create_user(db, UserCreate(
-                email="admin@thecrc.com", username="admin",
-                name="Administrador", password=pwd, role="admin",
-            ), hash_password(pwd))
-            print(f"✓ Admin user created")
-        else:
-            updates: dict = {}
-            if not admin.username:
-                updates["username"] = "admin"
-            env_pwd = os.getenv("SEED_ADMIN_PASSWORD")
-            if env_pwd:
-                updates["hashed_password"] = hash_password(env_pwd)
-            if updates:
-                _upd(db, admin.user_id, updates)
+        def seed_user(email, username, name, role):
+            user = get_user_by_email(db, email)
+            if not user:
+                pwd = secrets.token_urlsafe(16)
+                create_user(db, UserCreate(
+                    email=email, username=username, name=name, password=pwd, role=role,
+                ), hash_password(pwd))
+                print(f"✓ Usuario creado: {username}  |  contraseña inicial: {pwd}")
+                print(f"  (cambia esta contraseña desde Gestión de Usuarios)")
+            else:
+                # Solo corrige username/role si faltan (migración)
+                updates = {}
+                if not user.username:
+                    updates["username"] = username
+                if user.role != role:
+                    updates["role"] = role
+                if updates:
+                    _upd(db, user.user_id, updates)
 
-        # jretana
-        jretana = get_user_by_email(db, "jretana@thecrc.com")
-        if not jretana:
-            pwd = os.getenv("SEED_JRETANA_PASSWORD") or secrets.token_urlsafe(16)
-            jretana = create_user(db, UserCreate(
-                email="jretana@thecrc.com", username="jretana",
-                name="J. Retana", password=pwd, role="admin",
-            ), hash_password(pwd))
-            print("✓ User jretana created")
-        else:
-            updates = {}
-            if not jretana.username:
-                updates["username"] = "jretana"
-            if jretana.role != "admin":
-                updates["role"] = "admin"
-            env_pwd = os.getenv("SEED_JRETANA_PASSWORD")
-            if env_pwd:
-                updates["hashed_password"] = hash_password(env_pwd)
-            if updates:
-                _upd(db, jretana.user_id, updates)
-                print("✓ jretana synced")
+        seed_user("admin@thecrc.com",   "admin",   "Administrador", "admin")
+        seed_user("jretana@thecrc.com", "jretana", "J. Retana",     "admin")
+
     except Exception as e:
         print(f"Seed warning: {e}")
     finally:
