@@ -34,7 +34,6 @@ export const api = {
   getUsers: () => request<import("./types").User[]>("/api/auth/users"),
   createUser: (data: unknown) => request<import("./types").User>("/api/auth/register", { method: "POST", body: JSON.stringify(data) }),
   updateUser: (id: number, data: unknown) => request<import("./types").User>(`/api/auth/users/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
-  deleteUser: (id: number) => fetch(`${API}/api/auth/users/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${getToken()}` } }),
 
   // Providers
   getProviders: (activeOnly = true) => request<import("./types").Provider[]>(`/api/providers/?active_only=${activeOnly}`),
