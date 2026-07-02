@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import type { User } from "@/lib/types";
 import { getStoredUser } from "@/lib/auth";
@@ -15,6 +16,13 @@ const roleColor = (r: string) => ROLES.find(x => x.value === r)?.color ?? "bg-gr
 const EMPTY_FORM = { name: "", username: "", password: "", role: "user" };
 
 export default function UsuariosPage() {
+  const router = useRouter();
+  const me = getStoredUser();
+
+  useEffect(() => {
+    if (me && me.role !== "admin") router.replace("/admin/vouchers");
+  }, []);
+
   const [users, setUsers]       = useState<User[]>([]);
   const [loading, setLoading]   = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -23,7 +31,6 @@ export default function UsuariosPage() {
   const [error, setError]       = useState("");
   const [editUser, setEditUser] = useState<User | null>(null);
   const [resetPwd, setResetPwd] = useState("");
-  const me = getStoredUser();
 
   const load = () => {
     setLoading(true);

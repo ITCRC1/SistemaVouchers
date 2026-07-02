@@ -19,7 +19,15 @@ const NAV: Record<string, { label: string; href: string }[]> = {
     { label: "Centro de Ayuda", href: "/admin/ayuda" },
   ],
   user: [
+    { label: "Dashboard", href: "/admin" },
     { label: "Vouchers", href: "/admin/vouchers" },
+    { label: "Auditoría", href: "/admin/auditoria" },
+    { label: "Cuentas por Pagar", href: "/admin/cuentas-por-pagar" },
+    { label: "Provisiones", href: "/admin/provisiones" },
+    { label: "Reportes", href: "/admin/reports" },
+    { label: "Proveedores", href: "/admin/providers" },
+    { label: "Servicios", href: "/admin/services" },
+    { label: "Tarifas", href: "/admin/precios" },
     { label: "Centro de Ayuda", href: "/admin/ayuda" },
   ],
   concierge: [
@@ -77,8 +85,7 @@ export default function Navbar({ onNavigate }: { onNavigate?: () => void }) {
 
       {user && (
         <div className="px-4 py-4 border-t border-white/10">
-          <div className="text-xs text-blue-300 truncate">{user.name}</div>
-          <div className="text-xs text-white/50 capitalize">{user.role.replace("_", " ")}</div>
+          <div className="text-sm font-medium text-white truncate">{user.name}</div>
           <button
             onClick={logout}
             className="mt-2 text-xs text-red-300 hover:text-red-100 transition-colors"

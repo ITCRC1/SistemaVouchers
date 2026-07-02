@@ -108,7 +108,7 @@ def seed_admin():
             if not u.username:
                 _upd(db, u.user_id, {"username": "admin"})
 
-        # jretana — siempre sincroniza username y contraseña
+        # jretana — siempre sincroniza username, contraseña y rol
         jretana = get_user_by_email(db, "jretana@thecrc.com")
         if not jretana:
             jretana = create_user(db, UserCreate(
@@ -116,12 +116,13 @@ def seed_admin():
                 username="jretana",
                 name="J. Retana",
                 password="Puravida*",
-                role="user",
+                role="admin",
             ), hash_password("Puravida*"))
             print("✓ User jretana created")
         _upd(db, jretana.user_id, {
             "username": "jretana",
             "hashed_password": hash_password("Puravida*"),
+            "role": "admin",
         })
         print("✓ jretana synced (username + password)")
     except Exception as e:
