@@ -74,6 +74,16 @@ export default function ProvidersPage() {
     load();
   }
 
+  async function handleDelete(p: Provider) {
+    if (!confirm(`¿Eliminar al proveedor "${p.name}"?\nSolo es posible si no tiene vouchers registrados.`)) return;
+    try {
+      await api.deleteProvider(p.provider_id);
+      load();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "No se pudo eliminar");
+    }
+  }
+
   const ProviderForm = ({ form, setForm, onSubmit, submitLabel, onCancel }: {
     form: typeof EMPTY;
     setForm: React.Dispatch<React.SetStateAction<typeof EMPTY>>;
@@ -206,6 +216,10 @@ export default function ProvidersPage() {
                         <button onClick={() => toggleActive(p)}
                           className={`text-xs hover:underline ${p.is_active ? "text-amber-500" : "text-green-600"}`}>
                           {p.is_active ? "Desactivar" : "Activar"}
+                        </button>
+                        <button onClick={() => handleDelete(p)}
+                          className="text-xs text-red-500 hover:underline">
+                          Eliminar
                         </button>
                       </div>
                     </td>

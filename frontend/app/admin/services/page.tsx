@@ -77,6 +77,16 @@ export default function ServicesPage() {
     load();
   }
 
+  async function handleDelete(s: Service) {
+    if (!confirm(`¿Eliminar el servicio "${s.service_name}"?\nSolo es posible si no tiene vouchers registrados.`)) return;
+    try {
+      await api.deleteService(s.service_id);
+      load();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "No se pudo eliminar");
+    }
+  }
+
   const ServiceForm = ({ form, setForm, onSubmit, submitLabel, onCancel }: {
     form: typeof EMPTY;
     setForm: React.Dispatch<React.SetStateAction<typeof EMPTY>>;
@@ -214,6 +224,10 @@ export default function ServicesPage() {
                         <button onClick={() => toggleActive(s)}
                           className={`text-xs hover:underline ${s.is_active ? "text-amber-500" : "text-green-600"}`}>
                           {s.is_active ? "Desactivar" : "Activar"}
+                        </button>
+                        <button onClick={() => handleDelete(s)}
+                          className="text-xs text-red-500 hover:underline">
+                          Eliminar
                         </button>
                       </div>
                     </td>

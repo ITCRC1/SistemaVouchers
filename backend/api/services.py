@@ -34,3 +34,16 @@ def update_service(service_id: int, data: schemas.ServiceUpdate, db: Session = D
     if not obj:
         raise HTTPException(404, "Service not found")
     return obj
+
+
+@router.delete("/{service_id}", status_code=204)
+def delete_service(service_id: int, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
+    from models import Voucher
+    obj = crud.get_service(db, service_id)
+    if not obj:
+        raise HTTPException(404, "Servicio no encontrado")
+    linked = db.query(Voucher).filter(Voucher.service_id == service_id).first()
+    if linked:
+        raise HTTPException(409, "No se puede eliminar: el servicio tiene vouchers registrados")
+    db.delete(obj)
+    db.commit()

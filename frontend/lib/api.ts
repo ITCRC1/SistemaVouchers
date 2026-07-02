@@ -45,6 +45,7 @@ export const api = {
   getServices: (providerId?: number) => request<import("./types").Service[]>(`/api/services/${providerId ? `?provider_id=${providerId}` : ""}`),
   createService: (data: unknown) => request("/api/services/", { method: "POST", body: JSON.stringify(data) }),
   updateService: (id: number, data: unknown) => request(`/api/services/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteService: (id: number) => request(`/api/services/${id}`, { method: "DELETE" }),
 
   // Vouchers
   getVouchers: (params?: Record<string, string>) => {

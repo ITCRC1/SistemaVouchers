@@ -36,8 +36,14 @@ def update_provider(provider_id: int, data: schemas.ProviderUpdate, db: Session 
     return obj
 
 
-@router.delete("/{provider_id}")
+@router.delete("/{provider_id}", status_code=204)
 def delete_provider(provider_id: int, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
-    if not crud.delete_provider(db, provider_id):
-        raise HTTPException(404, "Provider not found")
-    return {"message": "Provider deactivated"}
+    from models import Voucher
+    obj = crud.get_provider(db, provider_id)
+    if not obj:
+        raise HTTPException(404, "Proveedor no encontrado")
+    linked = db.query(Voucher).filter(Voucher.provider_id == provider_id).first()
+    if linked:
+        raise HTTPException(409, "No se puede eliminar: el proveedor tiene vouchers registrados")
+    db.delete(obj)
+    db.commit()
