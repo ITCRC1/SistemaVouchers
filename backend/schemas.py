@@ -8,8 +8,8 @@ from models import ProviderType, ServiceType, VoucherStatus, UsageStatus, Valida
 # ── Auth ──────────────────────────────────────────────────────────────────────
 
 class UserCreate(BaseModel):
-    email: str
-    username: Optional[str] = None
+    email: Optional[str] = None
+    username: str
     name: str
     password: str
     role: str = "user"

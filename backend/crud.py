@@ -51,8 +51,9 @@ def update_user(db: Session, user_id: int, updates: dict) -> Optional[User]:
 
 
 def create_user(db: Session, data: schemas.UserCreate, hashed_password: str) -> User:
+    email = data.email or f"{data.username}@vouchers.internal"
     user = User(
-        email=data.email,
+        email=email,
         username=data.username or None,
         name=data.name,
         hashed_password=hashed_password,

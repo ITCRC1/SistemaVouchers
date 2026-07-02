@@ -12,7 +12,7 @@ const ROLES = [
 const roleLabel = (r: string) => ROLES.find(x => x.value === r)?.label ?? r;
 const roleColor = (r: string) => ROLES.find(x => x.value === r)?.color ?? "bg-gray-100 text-gray-600";
 
-const EMPTY_FORM = { name: "", email: "", username: "", password: "", role: "user" };
+const EMPTY_FORM = { name: "", username: "", password: "", role: "user" };
 
 export default function UsuariosPage() {
   const [users, setUsers]       = useState<User[]>([]);
@@ -94,18 +94,10 @@ export default function UsuariosPage() {
                   className="w-full border rounded-lg px-3 py-2 text-sm" />
               </div>
               <div>
-                <label className="text-xs text-gray-500 block mb-1">
-                  Usuario <span className="text-gray-400">(para iniciar sesión sin @)</span>
-                </label>
-                <input placeholder="ej. jretana" value={form.username}
+                <label className="text-xs text-gray-500 block mb-1">Usuario</label>
+                <input required placeholder="ej. jretana" value={form.username}
                   onChange={e => setForm(f => ({ ...f, username: e.target.value.toLowerCase().replace(/\s/g, "") }))}
                   className="w-full border rounded-lg px-3 py-2 text-sm font-mono" />
-              </div>
-              <div>
-                <label className="text-xs text-gray-500 block mb-1">Email</label>
-                <input required type="email" placeholder="usuario@thecrc.com" value={form.email}
-                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm" />
               </div>
               <div>
                 <label className="text-xs text-gray-500 block mb-1">Contraseña inicial</label>

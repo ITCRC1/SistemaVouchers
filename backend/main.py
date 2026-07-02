@@ -92,24 +92,38 @@ def seed_admin():
 
     db = SessionLocal()
     try:
+        from crud import update_user as _upd
+        # Admin
         if not get_user_by_email(db, "admin@thecrc.com"):
             create_user(db, UserCreate(
                 email="admin@thecrc.com",
+                username="admin",
                 name="Administrador",
                 password="Admin2026!",
                 role="admin",
             ), hash_password("Admin2026!"))
-            print("✓ Admin user created: admin@thecrc.com / Admin2026!")
-        if not get_user_by_email(db, "jretana@thecrc.com"):
-            u = create_user(db, UserCreate(
+            print("✓ Admin user created")
+        else:
+            u = get_user_by_email(db, "admin@thecrc.com")
+            if not u.username:
+                _upd(db, u.user_id, {"username": "admin"})
+
+        # jretana — siempre sincroniza username y contraseña
+        jretana = get_user_by_email(db, "jretana@thecrc.com")
+        if not jretana:
+            jretana = create_user(db, UserCreate(
                 email="jretana@thecrc.com",
+                username="jretana",
                 name="J. Retana",
                 password="Puravida*",
                 role="user",
             ), hash_password("Puravida*"))
-            from crud import update_user as _upd
-            _upd(db, u.user_id, {"username": "jretana"})
-            print("✓ User created: jretana / jretana@thecrc.com")
+            print("✓ User jretana created")
+        _upd(db, jretana.user_id, {
+            "username": "jretana",
+            "hashed_password": hash_password("Puravida*"),
+        })
+        print("✓ jretana synced (username + password)")
     except Exception as e:
         print(f"Seed warning: {e}")
     finally:

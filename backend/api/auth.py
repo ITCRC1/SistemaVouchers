@@ -70,6 +70,10 @@ def register(
     db: Session = Depends(get_db),
     current_user=Depends(require_role("admin")),
 ):
+    if crud.get_user_by_username(db, data.username):
+        raise HTTPException(status_code=400, detail="Nombre de usuario ya existe")
+    if not data.email:
+        data.email = f"{data.username}@vouchers.internal"
     if crud.get_user_by_email(db, data.email):
         raise HTTPException(status_code=400, detail="Email ya registrado")
     return crud.create_user(db, data, hash_password(data.password))
