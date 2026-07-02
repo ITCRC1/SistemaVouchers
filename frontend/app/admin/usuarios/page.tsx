@@ -86,6 +86,12 @@ export default function UsuariosPage() {
     load();
   }
 
+  async function handleDelete(u: User) {
+    if (!confirm(`¿Eliminar al usuario "${u.name}"? Esta acción no se puede deshacer.`)) return;
+    await api.deleteUser(u.user_id);
+    load();
+  }
+
   return (
     <>
       <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
@@ -235,10 +241,16 @@ export default function UsuariosPage() {
                       Editar
                     </button>
                     {u.user_id !== me?.user_id && (
-                      <button onClick={() => toggleActive(u)}
-                        className={`text-xs hover:underline ${u.is_active ? "text-red-500" : "text-green-600"}`}>
-                        {u.is_active ? "Desactivar" : "Activar"}
-                      </button>
+                      <>
+                        <button onClick={() => toggleActive(u)}
+                          className={`text-xs hover:underline ${u.is_active ? "text-amber-500" : "text-green-600"}`}>
+                          {u.is_active ? "Desactivar" : "Activar"}
+                        </button>
+                        <button onClick={() => handleDelete(u)}
+                          className="text-xs text-red-500 hover:underline">
+                          Eliminar
+                        </button>
+                      </>
                     )}
                   </div>
                 </td>

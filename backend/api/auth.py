@@ -102,6 +102,21 @@ def update_user(
     return user
 
 
+@router.delete("/users/{user_id}", status_code=204)
+def delete_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(require_role("admin")),
+):
+    if user_id == current_user.user_id:
+        raise HTTPException(status_code=400, detail="No puedes eliminar tu propia cuenta")
+    user = crud.get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    db.delete(user)
+    db.commit()
+
+
 @router.get("/me", response_model=schemas.UserOut)
 def me(current_user=Depends(get_current_user)):
     return current_user
