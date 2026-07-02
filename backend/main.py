@@ -10,8 +10,9 @@ from api import auth, providers, services, vouchers, voucher_usage, audit, repor
 Base.metadata.create_all(bind=engine)
 
 # Migrations — add columns introduced after initial deploy
+# Each statement runs in autocommit so a failure on one doesn't abort the rest.
 _sql = __import__("sqlalchemy").text
-with engine.connect() as conn:
+with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
     for stmt in [
         "ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS service_date DATE",
         "ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS sales_channel VARCHAR(50)",
@@ -48,9 +49,8 @@ with engine.connect() as conn:
     ]:
         try:
             conn.execute(_sql(stmt))
-        except Exception:
-            pass
-    conn.commit()
+        except Exception as _e:
+            print(f"Migration note: {_e}")
 
 app = FastAPI(title="Sistema de Vouchers Electrónicos", version="1.0.0")
 
