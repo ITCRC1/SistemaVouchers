@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { Service } from "@/lib/types";
+import { getStoredUser } from "@/lib/auth";
 import TableSkeleton from "@/components/TableSkeleton";
 
 const SERVICE_TYPES: { value: string; label: string }[] = [
@@ -16,6 +17,7 @@ const typeLabel = (v: string) => SERVICE_TYPES.find(t => t.value === v)?.label ?
 const EMPTY = { service_name: "", service_type: "TOUR", description: "", pricing_code: "", category: "TOURS", currency: "USD" };
 
 export default function ServicesPage() {
+  const isAdmin = getStoredUser()?.role === "admin";
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading]   = useState(true);
   const [saving, setSaving]     = useState(false);
@@ -70,11 +72,6 @@ export default function ServicesPage() {
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error al guardar");
     } finally { setSaving(false); }
-  }
-
-  async function toggleActive(s: Service) {
-    await api.updateService(s.service_id, { is_active: !s.is_active });
-    load();
   }
 
   async function handleDelete(s: Service) {
@@ -216,20 +213,12 @@ export default function ServicesPage() {
                       </span>
                     </td>
                     <td className="table-td text-center">
-                      <div className="flex items-center justify-center gap-3">
-                        <button onClick={() => openEdit(s)}
-                          className="text-xs text-[#0066CC] hover:underline">
-                          Editar
-                        </button>
-                        <button onClick={() => toggleActive(s)}
-                          className={`text-xs hover:underline ${s.is_active ? "text-amber-500" : "text-green-600"}`}>
-                          {s.is_active ? "Desactivar" : "Activar"}
-                        </button>
-                        <button onClick={() => handleDelete(s)}
-                          className="text-xs text-red-500 hover:underline">
-                          Eliminar
-                        </button>
-                      </div>
+                      {isAdmin ? (
+                        <div className="flex items-center justify-center gap-3">
+                          <button onClick={() => openEdit(s)} className="text-xs text-[#0066CC] hover:underline">Editar</button>
+                          <button onClick={() => handleDelete(s)} className="text-xs text-red-500 hover:underline">Eliminar</button>
+                        </div>
+                      ) : <span className="text-xs text-gray-300">—</span>}
                     </td>
                   </tr>
                 ))}
