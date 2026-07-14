@@ -26,11 +26,6 @@ def get_user_by_username(db: Session, username: str) -> Optional[User]:
     return db.query(User).filter(func.lower(User.username) == username.lower()).first()
 
 
-def get_user_by_identifier(db: Session, identifier: str) -> Optional[User]:
-    """Login por email o por username (case-insensitive)."""
-    return get_user_by_email(db, identifier) or get_user_by_username(db, identifier)
-
-
 def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
     return db.query(User).filter(User.user_id == user_id).first()
 

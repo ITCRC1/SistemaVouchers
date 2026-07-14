@@ -48,7 +48,7 @@ export default function AuditPage() {
   };
 
   return (
-    <AppShell roles={["admin", "auditor"]}>
+    <AppShell>
       <h1 className="text-2xl font-bold mb-6">Módulo de Auditoría</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">

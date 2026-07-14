@@ -1,16 +1,9 @@
 const API = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/^﻿/, "");
 
-function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("voucher_token");
-}
-
 async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
-  const token = getToken();
   const headers: Record<string, string> = {
     ...(opts.headers as Record<string, string>),
   };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
   if (!(opts.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
   }
@@ -25,11 +18,6 @@ async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
 
 export const api = {
   // Auth
-  login: (email: string, password: string) =>
-    request<{ access_token: string; token_type: string; user: import("./types").User }>("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    }),
   me: () => request<import("./types").User>("/api/auth/me"),
   getUsers: () => request<import("./types").User[]>("/api/auth/users"),
   createUser: (data: unknown) => request<import("./types").User>("/api/auth/register", { method: "POST", body: JSON.stringify(data) }),
@@ -61,7 +49,7 @@ export const api = {
   auditVoucher: (id: number, data: { audit_status: string; invoice_number?: string; audit_notes?: string }) =>
     request<import("./types").Voucher>(`/api/vouchers/${id}/audit`, { method: "PUT", body: JSON.stringify(data) }),
   generatePdf: (id: number) => request(`/api/vouchers/${id}/generate-pdf`, { method: "POST" }),
-  downloadPdfUrl: (id: number) => `${API}/api/vouchers/${id}/pdf?token=${getToken()}`,
+  downloadPdfUrl: (id: number) => `${API}/api/vouchers/${id}/pdf`,
 
   // Voucher Usage
   getUsages: () => request<import("./types").VoucherUsage[]>("/api/voucher-usage/"),

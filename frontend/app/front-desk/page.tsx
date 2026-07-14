@@ -67,7 +67,7 @@ export default function FrontDeskPage() {
   const fmt = (n: number) => `USD $${Number(n).toFixed(2)}`;
 
   return (
-    <AppShell roles={["admin", "front_desk"]}>
+    <AppShell>
       <h1 className="text-2xl font-bold mb-6">Front Desk — Registrar Uso de Voucher</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

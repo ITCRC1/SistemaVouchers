@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getStoredUser, logout } from "@/lib/auth";
+import { getStoredUser } from "@/lib/auth";
 import clsx from "clsx";
 
 const NAV: Record<string, { label: string; href: string }[]> = {
@@ -86,12 +86,6 @@ export default function Navbar({ onNavigate }: { onNavigate?: () => void }) {
       {user && (
         <div className="px-4 py-4 border-t border-white/10">
           <div className="text-sm font-medium text-white truncate">{user.name}</div>
-          <button
-            onClick={logout}
-            className="mt-2 text-xs text-red-300 hover:text-red-100 transition-colors"
-          >
-            Cerrar sesión
-          </button>
         </div>
       )}
     </nav>

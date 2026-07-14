@@ -23,9 +23,7 @@ uvicorn main:app --reload
 # → Docs en http://localhost:8000/docs
 ```
 
-**Usuario admin por defecto:**
-- Email: `admin@thecrc.com`
-- Password: `Admin2026!`
+> El sistema ya no requiere inicio de sesión: todas las rutas quedan abiertas y las acciones se atribuyen automáticamente al usuario `admin@thecrc.com` (creado en el primer arranque del backend).
 
 ### 3. Frontend
 ```bash
