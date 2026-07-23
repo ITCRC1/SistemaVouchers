@@ -1,4 +1,12 @@
-const API = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/^﻿/, "");
+const SSO_REFRESH_URL = "https://apps.thecostaricacollection.com/api/sso/refresh";
+
+function redirectToSso(): never {
+  const next = encodeURIComponent(window.location.href);
+  window.location.href = `${SSO_REFRESH_URL}?next=${next}`;
+  // La navegación real ocurre de forma asíncrona; no resolvemos la promesa
+  // para que el código que llamó a request() no siga ejecutándose con datos falsos.
+  throw new Error("Sesión vencida — redirigiendo al SSO");
+}
 
 async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
@@ -8,7 +16,13 @@ async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
     headers["Content-Type"] = "application/json";
   }
 
-  const res = await fetch(`${API}${path}`, { ...opts, headers });
+  // Mismo origen: el navegador solo habla con este frontend. La cookie crc_sso
+  // viaja automáticamente (misma sede), y app/api/[...path]/route.ts la reenvía
+  // al backend real — no hace falta credentials/CORS aquí.
+  const res = await fetch(path, { ...opts, headers });
+  if (res.status === 401) {
+    redirectToSso();
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
     throw new Error(err.detail ?? "Request failed");
@@ -49,7 +63,7 @@ export const api = {
   auditVoucher: (id: number, data: { audit_status: string; invoice_number?: string; audit_notes?: string }) =>
     request<import("./types").Voucher>(`/api/vouchers/${id}/audit`, { method: "PUT", body: JSON.stringify(data) }),
   generatePdf: (id: number) => request(`/api/vouchers/${id}/generate-pdf`, { method: "POST" }),
-  downloadPdfUrl: (id: number) => `${API}/api/vouchers/${id}/pdf`,
+  downloadPdfUrl: (id: number) => `/api/vouchers/${id}/pdf`,
 
   // Voucher Usage
   getUsages: () => request<import("./types").VoucherUsage[]>("/api/voucher-usage/"),

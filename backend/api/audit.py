@@ -42,3 +42,30 @@ def audit_report(db: Session = Depends(get_db), _=Depends(require_role("admin", 
         .limit(200)
         .all()
     )
+
+
+@router.get("/voucher/{consecutive_number}/scans")
+def voucher_scans(consecutive_number: str, db: Session = Depends(get_db), _=Depends(require_role("admin", "auditor"))):
+    """Historial de escaneos QR de un voucher (quién/cuándo/desde dónde).
+    Antes vivía en api/public.py bajo /api/public — quedaba expuesto sin la
+    cookie SSO porque ese prefijo es público. Se movió aquí para que el
+    guardia SSO lo exija."""
+    from models import Voucher, VoucherScan
+    v = db.query(Voucher).filter(Voucher.consecutive_number == consecutive_number).first()
+    if not v:
+        return []
+    scans = (
+        db.query(VoucherScan)
+        .filter(VoucherScan.voucher_id == v.voucher_id)
+        .order_by(VoucherScan.scanned_at.desc())
+        .all()
+    )
+    return [
+        {
+            "scan_id":    s.scan_id,
+            "scanned_at": str(s.scanned_at),
+            "ip_address": s.ip_address,
+            "user_agent": s.user_agent,
+        }
+        for s in scans
+    ]

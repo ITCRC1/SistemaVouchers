@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
-const API = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/^﻿/, "");
-
 interface VoucherPublic {
   found: boolean;
   consecutive_number: string;
@@ -48,7 +46,7 @@ export default function PublicVoucherPage() {
 
   useEffect(() => {
     if (!consecutive) return;
-    fetch(`${API}/api/public/voucher/${consecutive}`)
+    fetch(`/api/public/voucher/${consecutive}`)
       .then(r => r.json())
       .then(d => {
         setData(d);
@@ -65,7 +63,7 @@ export default function PublicVoucherPage() {
     if (!consecutive || confirming || confirmed) return;
     setConfirming(true);
     try {
-      const r = await fetch(`${API}/api/public/voucher/${consecutive}/confirm`, { method: "POST" });
+      const r = await fetch(`/api/public/voucher/${consecutive}/confirm`, { method: "POST" });
       const json = await r.json();
       if (r.ok) {
         setConfirmed(true);

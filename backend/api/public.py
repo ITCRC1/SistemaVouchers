@@ -9,7 +9,6 @@ from datetime import datetime
 
 from database import get_db
 from models import Voucher, VoucherScan
-from api.auth import get_current_user
 
 router = APIRouter(prefix="/api/public", tags=["public"])
 
@@ -81,26 +80,3 @@ def confirm_voucher(consecutive_number: str, request: Request, db: Session = Dep
         "consecutive_number": consecutive_number,
         "provider_confirmed_at": str(v.provider_confirmed_at),
     }
-
-
-@router.get("/voucher/{consecutive_number}/scans")
-def get_scans(consecutive_number: str, db: Session = Depends(get_db), _=Depends(get_current_user)):
-    """Admin only — returns scan history for a voucher."""
-    v = db.query(Voucher).filter(Voucher.consecutive_number == consecutive_number).first()
-    if not v:
-        return []
-    scans = (
-        db.query(VoucherScan)
-        .filter(VoucherScan.voucher_id == v.voucher_id)
-        .order_by(VoucherScan.scanned_at.desc())
-        .all()
-    )
-    return [
-        {
-            "scan_id":    s.scan_id,
-            "scanned_at": str(s.scanned_at),
-            "ip_address": s.ip_address,
-            "user_agent": s.user_agent,
-        }
-        for s in scans
-    ]

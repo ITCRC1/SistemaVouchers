@@ -6,6 +6,7 @@ from pathlib import Path
 from database import Base, engine
 from config import settings
 from api import auth, providers, services, vouchers, voucher_usage, audit, reports, public
+from sso_guard import SsoGuardMiddleware
 
 Base.metadata.create_all(bind=engine)
 
@@ -54,10 +55,15 @@ with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
 
 app = FastAPI(title="Sistema de Vouchers Electrónicos", version="1.0.0")
 
+app.add_middleware(SsoGuardMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    # Frontend y backend viven en orígenes distintos (settings.frontend_url vs.
+    # este servicio) y la cookie crc_sso solo viaja en llamadas con credenciales,
+    # así que no puede ser "*": debe ser el origen explícito + allow_credentials=True.
+    allow_origins=[settings.frontend_url],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
